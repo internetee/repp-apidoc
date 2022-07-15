@@ -718,17 +718,49 @@ You must replace <code>dGVzdDp0ZXN0MTIz</code> with your personal API key.
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-    </span><span class="nl">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="s2">"ATSAA:15554596"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"ATSAA:5767A313"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"ATSAA:634CF14B"</span><span class="p">,</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nl">"total_number_of_records"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
+    </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Command completed successfully"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"ATSAA:15554596"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"ATSAA:5767A313"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"ATSAA:634CF14B"</span><span class="p">,</span><span class="w">
+        </span><span class="p">],</span><span class="w">
+        </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
+    </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>Get all contacts</p>
 <h3 id='http-request-6'>HTTP Request</h3>
 <p><code>GET /repp/v1/contacts</code></p>
+<h3 id='url-parameters-5'>URL Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>limit</td>
+<td>No</td>
+<td>200</td>
+<td>How many objects to return</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>No</td>
+<td>0</td>
+<td>Object query offset</td>
+</tr>
+<tr>
+<td>details</td>
+<td>No</td>
+<td>false</td>
+<td>Show full object for each contact</td>
+</tr>
+</tbody></table>
 <h2 id='get-a-specific-contact'>Get a specific contact</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET <span class="s1">'https://testrar.internet.ee/repp/v1/contacts/ATSAA:KARL'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'Authorization: Basic dGVzdDp0ZXN0MTIz'</span> <span class="se">\</span>
 <span class="nt">--data-raw</span> <span class="s1">''</span>
@@ -740,39 +772,55 @@ You must replace <code>dGVzdDp0ZXN0MTIz</code> with your personal API key.
     </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w">
     </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Command completed successfully"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:KARL"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John Doe"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"ident"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"12345678901"</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"priv"</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"country_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"EE"</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="nl">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"xxx@xxx.ee"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"+xxx"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"auth_info"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ed33c67bedb32b1567b131"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"statuses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-            </span><span class="s2">"ok"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"linked"</span><span class="w">
-        </span><span class="p">],</span><span class="w">
-        </span><span class="nl">"disclosed_attributes"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+        </span><span class="nl">"contact"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1111111:8E561326"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John Doe"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"ident"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"12345678901"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"priv"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"country_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"EE"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"xxx@xxx.ee"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"+xxx"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"auth_info"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ed33c67bedb32b1567b131"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"statuses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"ok"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok status description"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"linked"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"disclosed_attributes"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nl">"registrar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Registrar"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://registrar"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"domains"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nl">"domains_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+        </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>Get a specific contact</p>
 <h3 id='http-request-7'>HTTP Request</h3>
 <p><code>GET /repp/v1/contacts/:contact_id</code></p>
-<h3 id='url-parameters-5'>URL Parameters</h3>
+<h3 id='url-parameters-6'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
 <th>Required</th>
+<th>Default</th>
 <th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
 <td>contact_id</td>
 <td>Yes</td>
+<td></td>
 <td>Contact ID</td>
+</tr>
+<tr>
+<td>simple</td>
+<td>No</td>
+<td>false</td>
+<td>Show simple object for contact</td>
 </tr>
 </tbody></table>
 <h2 id='delete-a-specific-contact'>Delete a specific contact</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> DELETE <span class="s1">'https://testrar.internet.ee/repp/v1/contacts/ATSAA:KARL'</span> <span class="se">\</span>
@@ -800,7 +848,7 @@ You must replace <code>dGVzdDp0ZXN0MTIz</code> with your personal API key.
 <p>Delete a specific contact</p>
 <h3 id='http-request-8'>HTTP Request</h3>
 <p><code>DELETE /repp/v1/contacts/:contact_id</code></p>
-<h3 id='url-parameters-6'>URL Parameters</h3>
+<h3 id='url-parameters-7'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -838,7 +886,7 @@ You must replace <code>dGVzdDp0ZXN0MTIz</code> with your personal API key.
     </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Command completed successfully"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"contact"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:84F23FD1"</span><span class="w">
+            </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:84F23FD1"</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -913,7 +961,7 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
     </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Command completed successfully"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"contact"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:84F23FD1"</span><span class="w">
+            </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:84F23FD1"</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -921,7 +969,7 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
 <p>Update an existing contact</p>
 <h3 id='http-request-10'>HTTP Request</h3>
 <p><code>PUT /repp/v1/contacts/:contact_id</code></p>
-<h3 id='url-parameters-7'>URL Parameters</h3>
+<h3 id='url-parameters-8'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -975,7 +1023,7 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
     </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Command completed successfully"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"contact"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PUDERJAKAPSAS"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PUDERJAKAPSAS"</span><span class="p">,</span><span class="w">
             </span><span class="nl">"available"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
@@ -984,7 +1032,7 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
 <p>Checks whether the contact code is available for custom use</p>
 <h3 id='http-request-11'>HTTP Request</h3>
 <p><code>GET /repp/v1/contacts/check/:contact_id</code></p>
-<h3 id='url-parameters-8'>URL Parameters</h3>
+<h3 id='url-parameters-9'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1009,11 +1057,14 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
     </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w">
     </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Command completed successfully"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"new_domain"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"www.ee"</span><span class="w">
+        </span><span class="p">],</span><span class="w">
         </span><span class="nl">"domains"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
             </span><span class="s2">"kass.ee"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"koer.ee"</span><span class="p">,</span><span class="w">
         </span><span class="p">],</span><span class="w">
-        </span><span class="nl">"total_number_of_records"</span><span class="p">:</span><span class="w"> </span><span class="mi">69</span><span class="w">
+        </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">69</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
@@ -1024,10 +1075,82 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
     </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w">
     </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Command completed successfully"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"new_domain"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wwww.ee"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"registrant"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Mary Änn O’Connež-Šuslik"</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1111111:0FEEDC3C"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nl">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2022-06-15T16:04:07.042+03:00"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2022-06-20T14:02:10.339+03:00"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"expire_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2022-12-16T00:00:00.000+02:00"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"outzone_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2022-06-20T14:02:10.304+03:00"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"delete_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2022-07-21"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"force_delete_date"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1111111:65B7EB55"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdminDomainContact"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Mary Änn O’Connež-Šuslik"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1111111:8E3736F2"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TechDomainContact"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Mary Änn O’Connež-Šuslik"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">],</span><span class="w">
+                </span><span class="nl">"nameservers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">37</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"hostname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ns1.oberbrunner.net"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"ipv4"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                            </span><span class="s2">"219.175.134.244"</span><span class="w">
+                        </span><span class="p">],</span><span class="w">
+                        </span><span class="nl">"ipv6"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                            </span><span class="s2">"647B:275:536E:1C6B:8D51:5E15:D6F5:184A"</span><span class="w">
+                        </span><span class="p">]</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">38</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"hostname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ns2.kunze.org"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"ipv4"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                            </span><span class="s2">"134.156.204.100"</span><span class="w">
+                        </span><span class="p">],</span><span class="w">
+                        </span><span class="nl">"ipv6"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                            </span><span class="s2">"A724:680A:9437:E459:A20D:5C53:DF42:CD5F"</span><span class="w">
+                        </span><span class="p">]</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">],</span><span class="w">
+                </span><span class="nl">"dnssec_keys"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"flags"</span><span class="p">:</span><span class="w"> </span><span class="mi">257</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"protocol"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"alg"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"public_key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e087a47db0e31dbb162e4bb62da7a34322be3ff66fdcf65268225c4db3b37d79"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">],</span><span class="w">
+                </span><span class="nl">"statuses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"ok"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"pendingDelete"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"serverHold"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nl">"registrar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Registrar"</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://regitrar.ee"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nl">"dispute"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"transfer_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a39f33a5c6a5aa3ac44e625c9eaa7476"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">],</span><span class="w">
         </span><span class="nl">"domains"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
             </span><span class="p">{</span><span class="w">
                 </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"kass.ee"</span><span class="p">,</span><span class="w">
-                </span><span class="nl">"registrant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:KARL"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"registrant"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"KARL"</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:KARL"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
                 </span><span class="nl">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-01-29T11:15:52.753+02:00"</span><span class="p">,</span><span class="w">
                 </span><span class="nl">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-01-29T11:15:52.753+02:00"</span><span class="p">,</span><span class="w">
                 </span><span class="nl">"expire_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2022-01-30T00:00:00.000+02:00"</span><span class="p">,</span><span class="w">
@@ -1038,11 +1161,13 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
                 </span><span class="nl">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
                     </span><span class="p">{</span><span class="w">
                         </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:KARL"</span><span class="p">,</span><span class="w">
-                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdminDomainContact"</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdminDomainContact"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"KARL"</span><span class="w">
                     </span><span class="p">},</span><span class="w">
                     </span><span class="p">{</span><span class="w">
                         </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:KARL"</span><span class="p">,</span><span class="w">
-                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TechDomainContact"</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TechDomainContact"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"KARL"</span><span class="w">
                     </span><span class="p">}</span><span class="w">
                 </span><span class="p">],</span><span class="w">
                 </span><span class="nl">"nameservers"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
@@ -1054,6 +1179,7 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
                 </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Kreative Digital OÜ"</span><span class="p">,</span><span class="w">
                 </span><span class="nl">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://kreative.ee"</span><span class="w">
             </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"dispute"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
             </span><span class="nl">"transfer_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2f81ec671b69a2aa5d6375631e259ae7"</span><span class="p">,</span><span class="w">
             </span><span class="p">},</span><span class="w">
             </span><span class="p">{</span><span class="w">
@@ -1085,17 +1211,18 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
                 </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Kreative Digital OÜ"</span><span class="p">,</span><span class="w">
                 </span><span class="nl">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://kreative.ee"</span><span class="w">
             </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"dispute"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
             </span><span class="nl">"transfer_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"asdf564cs89er3dg46d5f3v1df6534g3f2"</span><span class="p">,</span><span class="w">
             </span><span class="p">},</span><span class="w">
         </span><span class="p">],</span><span class="w">
-        </span><span class="nl">"total_number_of_records"</span><span class="p">:</span><span class="w"> </span><span class="mi">69</span><span class="w">
+        </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">69</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>Gets all existing domains under current registrar account.</p>
 <h3 id='http-request-12'>HTTP Request</h3>
 <p><code>GET /repp/v1/domains</code></p>
-<h3 id='url-parameters-9'>URL Parameters</h3>
+<h3 id='url-parameters-10'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1119,8 +1246,8 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
 <tr>
 <td>details</td>
 <td>No</td>
-<td></td>
 <td>false</td>
+<td>Show full object of each domain</td>
 </tr>
 </tbody></table>
 <h2 id='get-a-specific-domain'>Get a specific domain</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> GET <span class="s1">'https://testrar.internet.ee/repp/v1/domains/biz.ee'</span> <span class="se">\</span>
@@ -1136,7 +1263,10 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
     </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"domain"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"biz.ee"</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"registrant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:749AA80F"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"registrant"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"KARL"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:749AA80F"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
             </span><span class="nl">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-01-15T12:07:20.079+02:00"</span><span class="p">,</span><span class="w">
             </span><span class="nl">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-01-21T16:41:59.707+02:00"</span><span class="p">,</span><span class="w">
             </span><span class="nl">"expire_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-01-16T00:00:00.000+02:00"</span><span class="p">,</span><span class="w">
@@ -1146,11 +1276,13 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
             </span><span class="nl">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
                 </span><span class="p">{</span><span class="w">
                     </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:C7A52A30"</span><span class="p">,</span><span class="w">
-                    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdminDomainContact"</span><span class="w">
+                    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AdminDomainContact"</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"KARL"</span><span class="w">
                 </span><span class="p">},</span><span class="w">
                 </span><span class="p">{</span><span class="w">
                     </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ATSAA:CC53EF9C"</span><span class="p">,</span><span class="w">
-                    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TechDomainContact"</span><span class="w">
+                    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TechDomainContact"</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"KARL"</span><span class="w">
                 </span><span class="p">}</span><span class="w">
             </span><span class="p">],</span><span class="w">
             </span><span class="nl">"nameservers"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
@@ -1162,6 +1294,7 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
                 </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Kreative Digital OÜ"</span><span class="p">,</span><span class="w">
                 </span><span class="nl">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://kreative.ee"</span><span class="w">
             </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"dispute"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
             </span><span class="nl">"transfer_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2f81ec671b69a2aa5d6375631e259ae7"</span><span class="p">,</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
@@ -1171,7 +1304,7 @@ Note — Wrap your payload attributes into "contact" object, as shown in example
 If you aren&#39;t sponsoring registrar for the domain, transfer_code is omitted from the response.</p>
 <h3 id='http-request-13'>HTTP Request</h3>
 <p><code>GET /repp/v1/domains/:domain_name</code></p>
-<h3 id='url-parameters-10'>URL Parameters</h3>
+<h3 id='url-parameters-11'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1181,7 +1314,7 @@ If you aren&#39;t sponsoring registrar for the domain, transfer_code is omitted 
 </thead><tbody>
 <tr>
 <td>domain_name</td>
-<td>No</td>
+<td>Yes</td>
 <td>Domain name</td>
 </tr>
 </tbody></table>
@@ -1203,6 +1336,9 @@ If you aren&#39;t sponsoring registrar for the domain, transfer_code is omitted 
         "nameservers_attributes": [
             {
                 "hostname": "ns1.kreative.ee"
+            },
+            {
+                "hostname": "ns2.kreative.ee"
             }
         ]
     }
@@ -1368,7 +1504,7 @@ Note — Wrap your payload attributes into "domain" object, as shown in example.
 <p>Changes domain registrant or auth code</p>
 <h3 id='http-request-15'>HTTP Request</h3>
 <p><code>PUT /repp/v1/domains/:domain_name</code></p>
-<h3 id='url-parameters-11'>URL Parameters</h3>
+<h3 id='url-parameters-12'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1426,7 +1562,7 @@ Note — Wrap your payload attributes into "domain" object, as shown in example.
 <span class="nt">--header</span> <span class="s1">'Authorization: Basic dGVzdDp0ZXN0MTIz'</span> <span class="se">\</span>
 <span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
 <span class="nt">--data-raw</span> <span class="s1">'{
-    "renew": {
+    "renews": {
         "period": 1,
         "period_unit": "y",
         "exp_date": "2021-04-20"
@@ -1449,7 +1585,7 @@ Note — Wrap your payload attributes into "domain" object, as shown in example.
 <p>Renews current domain for desired period.</p>
 <h3 id='http-request-16'>HTTP Request</h3>
 <p><code>POST /repp/v1/domains/:domain_name/renew</code></p>
-<h3 id='url-parameters-12'>URL Parameters</h3>
+<h3 id='url-parameters-13'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1502,8 +1638,10 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 
 <span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
 <span class="nt">--data-raw</span> <span class="s1">'{
-    "delete": {
-        "verified": false
+    "domain": {
+        "delete": {
+            "verified": false
+        }
     }
 }'</span>
 </code></pre></div>
@@ -1523,7 +1661,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Deletes a specific domain</p>
 <h3 id='http-request-17'>HTTP Request</h3>
 <p><code>DELETE /repp/v1/domains/:domain_name</code></p>
-<h3 id='url-parameters-13'>URL Parameters</h3>
+<h3 id='url-parameters-14'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1602,7 +1740,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Gets a specific domain&#39;s nameservers</p>
 <h3 id='http-request-18'>HTTP Request</h3>
 <p><code>GET /repp/v1/domains/:domain_name/nameservers</code></p>
-<h3 id='url-parameters-14'>URL Parameters</h3>
+<h3 id='url-parameters-15'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1650,7 +1788,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Add new nameserver(s) to specific domain</p>
 <h3 id='http-request-19'>HTTP Request</h3>
 <p><code>POST /repp/v1/domains/:domain_name/nameservers</code></p>
-<h3 id='url-parameters-15'>URL Parameters</h3>
+<h3 id='url-parameters-16'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1718,7 +1856,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Delete existing nameserver from domain.</p>
 <h3 id='http-request-20'>HTTP Request</h3>
 <p><code>DELETE /repp/v1/domains/:domain_name/nameservers/:nameserver_hostname</code></p>
-<h3 id='url-parameters-16'>URL Parameters</h3>
+<h3 id='url-parameters-17'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1762,7 +1900,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Gets a specific domain&#39;s DNSSEC keys</p>
 <h3 id='http-request-21'>HTTP Request</h3>
 <p><code>GET /repp/v1/domains/:domain_name/dnssec</code></p>
-<h3 id='url-parameters-17'>URL Parameters</h3>
+<h3 id='url-parameters-18'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1812,7 +1950,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Add new DNSSEC key(s) to specific domain</p>
 <h3 id='http-request-22'>HTTP Request</h3>
 <p><code>POST /repp/v1/domains/:domain_name/dnssec</code></p>
-<h3 id='url-parameters-18'>URL Parameters</h3>
+<h3 id='url-parameters-19'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1896,7 +2034,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Deletes one or many DNSSEC key(s) for specific domain.</p>
 <h3 id='http-request-23'>HTTP Request</h3>
 <p><code>DELETE /repp/v1/domains/:domain_name/dnssec</code></p>
-<h3 id='url-parameters-19'>URL Parameters</h3>
+<h3 id='url-parameters-20'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1969,7 +2107,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Adds a clientHold status to a specific domain</p>
 <h3 id='http-request-24'>HTTP Request</h3>
 <p><code>PUT /repp/v1/domains/:domain_name/statuses/clientHold</code></p>
-<h3 id='url-parameters-20'>URL Parameters</h3>
+<h3 id='url-parameters-21'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1999,7 +2137,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Removes clientHold status from specific domain</p>
 <h3 id='http-request-25'>HTTP Request</h3>
 <p><code>DELETE /repp/v1/domains/:domain_name/statuses/clientHold</code></p>
-<h3 id='url-parameters-21'>URL Parameters</h3>
+<h3 id='url-parameters-22'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2087,7 +2225,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Gets a specific domain&#39;s transfer info</p>
 <h3 id='http-request-26'>HTTP Request</h3>
 <p><code>GET /repp/v1/domains/:domain_name/transfer_info</code></p>
-<h3 id='url-parameters-22'>URL Parameters</h3>
+<h3 id='url-parameters-23'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2143,7 +2281,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 <p>Transfers domain from another registrar to your account.</p>
 <h3 id='http-request-27'>HTTP Request</h3>
 <p><code>POST /repp/v1/domains/:domain_name/transfer</code></p>
-<h3 id='url-parameters-23'>URL Parameters</h3>
+<h3 id='url-parameters-24'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -2270,17 +2408,8 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
     </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w">
     </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Command completed successfully"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"success"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"domain_transfer"</span><span class="p">,</span><span class="w">
-                </span><span class="nl">"domain_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"kotlet.ee"</span><span class="w">
-            </span><span class="p">},</span><span class="w">
-            </span><span class="p">{</span><span class="w">
-                </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"domain_transfer"</span><span class="p">,</span><span class="w">
-                </span><span class="nl">"domain_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"kanakotlet.ee"</span><span class="w">
-            </span><span class="p">}</span><span class="w">
-        </span><span class="p">],</span><span class="w">
-        </span><span class="nl">"failed"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+        </span><span class="nl">"affected_domains"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+        </span><span class="nl">"skipped_domains"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
@@ -2344,25 +2473,7 @@ Note — Wrap your payload attributes into "renew" object, as shown in example.
 }'</span>
 </code></pre></div>
 <blockquote>
-<p>If you want to add nameserver for specific domains, remove parameter &quot;id&quot; like that:</p>
-</blockquote>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="nt">--request</span> PUT <span class="s1">'https://testrar.internet.ee/repp/v1/registrar/nameservers'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'Authorization: Basic dGVzdDp0ZXN0MTIz'</span> <span class="se">\</span>
-<span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
-<span class="nt">--data-raw</span> <span class="s1">'{
-    "data": {
-        "type": "nameserver",
-        "domains": ["only.ee", "these.ee", "domains.ee"],
-        "attributes": {
-            "hostname": "ns1.ams1.domainer.ee",
-            "ipv4": ["192.168.1.1"],
-            "ipv6": ["2620:119:35::36"]
-        }
-    }
-}'</span>
-</code></pre></div>
-<blockquote>
-<p>Commands above return JSON structured like this:</p>
+<p>Both commands above return JSON structured like this:</p>
 </blockquote>
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w">
@@ -2415,9 +2526,9 @@ The new new hostname of the nameserver must be different. It&#39;s not possible 
 </tr>
 <tr>
 <td>data[id]</td>
-<td>No</td>
+<td>Yes</td>
 <td>String</td>
-<td>Hostname of replaceable nameserver</td>
+<td>Hostname of replacable nameserver</td>
 </tr>
 <tr>
 <td>data[domains]</td>
