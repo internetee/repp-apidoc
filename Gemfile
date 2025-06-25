@@ -1,6 +1,8 @@
 ruby '>=2.3.1'
 source 'https://rubygems.org'
 
+gem 'bundler', '~> 2.1'
+
 # Middleman
 gem 'middleman', '~>4.3'
 gem 'middleman-syntax', '~> 3.2'
