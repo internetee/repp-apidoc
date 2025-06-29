@@ -32,7 +32,7 @@ jobs:
     - run: gem update --system
 
     - name: Install dependencies for nokogiri
-      run: sudo apt-get update && sudo apt-get install -y build-essential zlib1g-dev libxml2-dev libxslt1-dev 
+      run: sudo apt-get update && sudo apt-get install -y build-essential zlib1g-dev libxml2-dev libxslt1-dev pkg-config libgmp-dev libffi-dev
 
     - run: bundle config set deployment 'true'
     - name: bundle install
