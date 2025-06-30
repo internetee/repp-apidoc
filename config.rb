@@ -1,3 +1,6 @@
+# Unique header generation
+require './lib/unique_head.rb'
+
 # Patch for removed URI.escape in Ruby >= 3.0
 require 'cgi'
 module URI
@@ -5,9 +8,6 @@ module URI
     CGI.escape(str.to_s)
   end
 end
-
-# Unique header generation
-require './lib/unique_head.rb'
 
 # Markdown
 set :markdown_engine, :redcarpet
