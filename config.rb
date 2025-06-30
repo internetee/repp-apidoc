@@ -1,3 +1,13 @@
+# Patch for removed URI.escape in Ruby >= 3.0
+unless URI.respond_to?(:escape)
+  require 'cgi'
+  module URI
+    def self.escape(str)
+      CGI.escape(str.to_s)
+    end
+  end
+end
+
 # Unique header generation
 require './lib/unique_head.rb'
 
