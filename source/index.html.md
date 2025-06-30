@@ -21,7 +21,7 @@ Welcome to the Estonian Internet Foundation's REST EPP (REPP for short) API docu
 
 We have language bindings in Shell. You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
 
-This production API project is only available for our active registrars. You can find more information about becoming registrar at our [wiki page](https://www.internet.ee/registrars/terms-and-conditions-for-becoming-a-registrar).
+This production API project is only available for our active registrars. You can find more information about becoming registrar at our [wiki page](https://www.internet.ee/registrar-portal/terms-and-conditions-for-becoming-a-registrar).
 
 # Environments
 
