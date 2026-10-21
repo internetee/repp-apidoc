@@ -288,7 +288,7 @@ Registry-initiated automatic-renewal messages have `attached_obj_type: "DomainAu
 }
 ```
 
-Events are `renewed`, `fundingWarning`, `renewProhibited`, and `fundingFailed`. See [Automatic renewal](#automatic-renewal) for when they are sent and the [poll message documentation](https://internetee.github.io/poll-apidoc/) for text and EPP examples. Registrar-requested enable, disable and reversal commands produce no automatic-renewal poll message.
+Events are `renewed`, `fundingWarning`, `renewProhibited`, and `renewalOverdue`. See [Automatic renewal](#automatic-renewal) for when they are sent and the [poll message documentation](https://internetee.github.io/poll-apidoc/) for text and EPP examples. Registrar-requested enable, disable and reversal commands produce no automatic-renewal poll message.
 
 # Contacts
 
@@ -893,11 +893,13 @@ Note — Wrap your payload attributes into "domain" object, as shown in example.
 
 ## Automatic renewal
 
-Automatic renewal is off by default and is managed by the sponsoring registrar. When enabled, the registry attempts renewal at expiry for one calendar year, charging the registrar's cash account at the tariff valid at the original expiry. Each original expiry has one cycle, identified by a UUID. When automatic renewal is unavailable, new opt-ins fail with `2306`; eligible reversals of existing cycles remain available.
+Automatic renewal is off by default and is managed by the sponsoring registrar. When enabled, the registry attempts renewal at expiry for one calendar year, charging the registrar's cash account at the tariff valid at the original expiry. Enabling the preference for an already expired, still-existing domain also triggers automatic renewal, including while it is out of zone or in redemption. Each original expiry has one cycle, identified by a UUID. When automatic renewal is unavailable, new opt-ins fail with `2306`; eligible reversals of existing cycles remain available.
 
-After payment, `rgp_statuses` contains `autoRenewPeriod` (RFC 3915), separately from ordinary domain `statuses`. Cancellation is available strictly before the original expiry plus 15 calendar days in Europe/Tallinn. Use the returned `cancellation_deadline` timestamp, including its time zone. Grace does not itself prevent edits or transfers; other domain restrictions still apply.
+Payment before the cancellation deadline starts paid grace: `rgp_statuses` contains `autoRenewPeriod` (RFC 3915), separately from ordinary domain `statuses`. Cancellation is available strictly before the original expiry plus 15 calendar days in Europe/Tallinn. Use the returned `cancellation_deadline` timestamp, including its time zone. The deadline only bounds the paid-grace reversal window; it does not stop renewal retries. Grace does not itself prevent edits or transfers; other domain restrictions still apply.
 
-Insufficient funds or a renewal-blocking status (including `pendingDelete`) leaves the cycle in `fundingRetry`. The registry retries every 15 minutes until the same deadline. A late successful renewal still extends from the original expiry by one year and leaves only the remaining cancellation window. If the deadline arrives without renewal, the cycle becomes `fundingFailed`, the preference is disabled, and ordinary expiry processing continues. A later top-up or re-enable does not reopen that cycle.
+Insufficient funds or a renewal-blocking status (including `pendingDelete` and `pendingUpdate`, a pending registrant change) leaves the cycle in `fundingRetry`. The registry retries every 15 minutes, including past the cancellation deadline, until renewal succeeds, the registrar explicitly opts out or renews manually, the domain is transferred, or the domain is deleted. Failed attempts do not change the preference. A later top-up can allow the same cycle to succeed. At the deadline, an unpaid cycle receives one `renewalOverdue` poll message; ordinary expiry processing continues while renewal attempts continue.
+
+A successful renewal always extends from the original expiry by one calendar year and restores the domain to the zone like a manual renewal, clearing expiry-related statuses and dates. Success before the deadline leaves only the remaining cancellation window. Success at or after the deadline goes immediately to `completed`, without `autoRenewPeriod`, and cannot be reversed.
 
 Disabling without a cycle ID is a future opt-out: it cancels a funding retry but leaves a paid renewal and its cancellation window intact. To cancel a paid renewal and obtain a refund, explicitly submit its cycle ID before the deadline. Reversal disables the preference, credits the exact original charge once, and removes the automatic year. If no other time was purchased, expiry returns to the original date; otherwise independently purchased time is preserved by subtracting only the automatic year. If the resulting expiry is in the past, ordinary expiry statuses and dates apply; reversal does not delete the domain. Repeating the same reversed cycle is successful without another refund, even after the deadline. A new reversal at or after the deadline fails with `2304` and changes nothing.
 
@@ -910,7 +912,9 @@ Event | When sent
 renewed | A scheduled renewal succeeds, including success after funding retries
 fundingWarning | First insufficient-funds warning in the cycle, once
 renewProhibited | First renewal-blocking warning in the cycle, once; also used for a missing renewal tariff
-fundingFailed | Deadline reached without renewal; preference disabled
+renewalOverdue | Once at the cancellation deadline for an unpaid cycle; renewal attempts continue
+
+Illustrative `renewalOverdue` text: "Domain example.ee was not automatically renewed by 2027-03-16 due to insufficient funds; domain goes out of zone. Renewal attempts continue until renewal succeeds, the registrar opts out or renews manually, the domain is transferred, or the domain is deleted."
 
 Normal grace completion sends no poll message. Registrar-requested enable, disable and reversal commands return their outcome in the command response and send no automatic-renewal poll message. Transfer completion produces no extra automatic-renewal poll message; existing transfer notifications still apply.
 
@@ -923,10 +927,10 @@ Field | Type | Description
 auto_renew.enabled | Boolean | Preference for future automatic renewal; independent of cycle state
 auto_renew.cycle | Object or null | Latest cycle, or null if no cycle exists
 auto_renew.cycle.id | String | Public cycle UUID used for reversal and idempotency
-auto_renew.cycle.state | String | fundingRetry, autoRenewPeriod, completed, reversed, fundingFailed, or cancelled
+auto_renew.cycle.state | String | fundingRetry, autoRenewPeriod, completed, reversed, or cancelled
 auto_renew.cycle.original_expire_time | String | Original expiry timestamp in ISO 8601 format
 auto_renew.cycle.expire_time | String or null | Expiry applied by the automatic renewal; null before payment succeeds
-auto_renew.cycle.cancellation_deadline | String | Fixed cancellation/retry deadline in ISO 8601 format
+auto_renew.cycle.cancellation_deadline | String | Fixed paid-grace reversal deadline in ISO 8601 format; retries continue past it
 auto_renew.cycle.attempts | Integer | Number of renewal attempts
 rgp_statuses | Array | ["autoRenewPeriod"] while paid grace is active; [] otherwise, including during funding retries
 
@@ -1021,7 +1025,7 @@ curl --location --request PUT 'https://testrar.internet.ee/repp/v1/domains/examp
 }
 ```
 
-Only the sponsoring registrar may change the preference or reverse a cycle (`2201`). Wrap parameters in `auto_renew`. At least one of `enabled` and `cycle_id` must be supplied. To enable future renewals, send `{"auto_renew":{"enabled":true}}`. To opt out without a refund, send `{"auto_renew":{"enabled":false}}`. Omitting `enabled` leaves the preference unchanged unless a reversal is requested; reversal sets it to false.
+Only the sponsoring registrar may change the preference or reverse a cycle (`2201`). Wrap parameters in `auto_renew`. At least one of `enabled` and `cycle_id` must be supplied. To enable renewals, send `{"auto_renew":{"enabled":true}}`; this also triggers renewal if the domain is already expired, including while out of zone or in redemption. To opt out without a refund, send `{"auto_renew":{"enabled":false}}`. Omitting `enabled` leaves the preference unchanged unless a reversal is requested; reversal sets it to false.
 
 A preference-only response has the same `domain` and `auto_renew` fields, with `reversal: null`. A repeated reversal returns `repeated: true` and the stored refund without issuing another credit. Unknown or wrong-domain cycles fail with `2303`. A cycle outside paid grace, or a new reversal at or after the deadline, fails with `2304`. Enabling when unavailable, or combining `enabled: true` with `cycle_id`, fails with `2306`. Failure leaves all state unchanged. These are response-body EPP result codes; see [Errors](#errors).
 
