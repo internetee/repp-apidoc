@@ -1,7 +1,7 @@
 # Errors
 
 <aside class="notice">
-This error section only covers HTTP codes. In additional to HTTP code, with each request, we provide EPP "code" attribute and human-readable "message" as well.
+In addition to the HTTP status, each response provides an EPP "code" attribute and a human-readable "message". The tables below distinguish HTTP statuses from automatic-renewal result codes.
 </aside>
 
 The REPP API uses the following error codes:
@@ -20,3 +20,17 @@ Error Code | Meaning
 429 | Too Many Requests -- You're requesting too many objects! Slow down!
 500 | Internal Server Error -- We had a problem with our server. Try again later.
 503 | Service Unavailable -- We're temporarily offline for maintenance. Please try again later.
+
+## Automatic renewal result codes
+
+These are EPP result codes in the response body, not HTTP statuses. They apply to automatic-renewal parameters on domain create/update and to the dedicated automatic-renewal endpoint.
+
+Code | Meaning in automatic-renewal commands
+---- | -----------------------------------
+2005 | Invalid boolean. REPP accepts only `true`, `false`, `"true"`, and `"false"`.
+2201 | Authorization error: only the sponsoring registrar may manage the preference or reverse a cycle.
+2303 | The cycle ID is unknown or belongs to another domain.
+2304 | The cycle cannot be reversed: it is not in paid grace, or the cancellation deadline has been reached. An already reversed cycle instead returns idempotent success.
+2306 | Invalid parameter combination or unavailable operation: automatic renewal is not available when enabling, enabling was combined with a reversal cycle ID, or a reversal was requested on domain create.
+
+A failed reversal leaves the preference, expiry and account balance unchanged. If reversal is part of a domain update, the entire update rolls back. The cancellation deadline is exclusive: a new reversal at or after that timestamp fails with code `2304`.

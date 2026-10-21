@@ -83,9 +83,16 @@ curl --location --request GET 'https://testrar.internet.ee/repp/v1/accounts/bala
     "code": 1000,
     "message": "Command completed successfully",
     "data": {
-        "balance": "420.0",
+        "balance": "432.00",
         "currency": "EUR",
         "transactions": [
+            {
+                "created_at": "2027-03-05T10:00:00.000+02:00",
+                "description": "Refund automatic renewal example.ee",
+                "type": "credit",
+                "sum": "12.00",
+                "balance": "432.00"
+            },
             {
                 "created_at": "2021-02-26T17:12:46.045+02:00",
                 "description": "Create abadiitas.ee",
@@ -104,7 +111,9 @@ curl --location --request GET 'https://testrar.internet.ee/repp/v1/accounts/bala
     }
 }
 ```
-Get account balance
+Get account balance.
+
+Automatic-renewal charges use account activity type `renew`. Reversals create a separate activity of type `refund`, crediting the exact original charge to the original payer's cash account. In detailed balance transactions, a refund has `type: "credit"` and a positive `sum`; the activity type is `refund`. Descriptions and amounts in examples are illustrative. A refund is recorded in the month it occurs, including when the renewal charge was in an earlier month.
 
 ### HTTP Request
 
@@ -259,6 +268,27 @@ Get a specific poll message
 Parameter | Required | Description
 --------- | ------- | -----------
 notification_id | Yes | Notification ID
+
+## Automatic-renewal poll messages
+
+Registry-initiated automatic-renewal messages have `attached_obj_type: "DomainAutoRenewal"`. The `attached_obj_id` identifies the attached record; use the UUID in `attached_obj_data.cycle.id` for reversal requests. Notifications and the registrar summary include structured `attached_obj_data`:
+
+```json
+{
+    "event": "renewed",
+    "domain": "example.ee",
+    "cycle": {
+        "id": "3f7c2a5e-0000-0000-0000-000000000000",
+        "state": "autoRenewPeriod",
+        "original_expire_time": "2027-03-01T00:00:00+02:00",
+        "expire_time": "2028-03-01T00:00:00+02:00",
+        "cancellation_deadline": "2027-03-16T00:00:00+02:00",
+        "attempts": 1
+    }
+}
+```
+
+Events are `renewed`, `fundingWarning`, `renewProhibited`, and `fundingFailed`. See [Automatic renewal](#automatic-renewal) for when they are sent and the [poll message documentation](https://internetee.github.io/poll-apidoc/) for text and EPP examples. Registrar-requested enable, disable and reversal commands produce no automatic-renewal poll message.
 
 # Contacts
 
@@ -538,9 +568,9 @@ curl --location --request GET 'https://testrar.internet.ee/repp/v1/domains' \
     "data": {
         "domains": [
             "kass.ee",
-            "koer.ee",
+            "koer.ee"
         ],
-        "total_number_of_records": 69
+        "count": 69
     }
 }
 ```
@@ -559,10 +589,14 @@ curl --location --request GET 'https://testrar.internet.ee/repp/v1/domains' \
                 "created_at": "2021-01-29T11:15:52.753+02:00",
                 "updated_at": "2021-01-29T11:15:52.753+02:00",
                 "expire_time": "2022-01-30T00:00:00.000+02:00",
+                "auto_renew": {
+                    "enabled": false,
+                    "cycle": null
+                },
+                "rgp_statuses": [],
                 "outzone_at": null,
                 "delete_date": null,
                 "force_delete_date": null,
-                "transfer_code": "378499652fe9f0075600bba06c3a2449",
                 "contacts": [
                     {
                         "code": "ATSAA:KARL",
@@ -578,11 +612,11 @@ curl --location --request GET 'https://testrar.internet.ee/repp/v1/domains' \
                 "statuses": [
                     "inactive"
                 ],
-            "registrar": {
-                "name": "Kreative Digital OÜ",
-                "website": "https://kreative.ee"
-            },
-            "transfer_code": "2f81ec671b69a2aa5d6375631e259ae7",
+                "registrar": {
+                    "name": "Kreative Digital OÜ",
+                    "website": "https://kreative.ee"
+                },
+                "transfer_code": "2f81ec671b69a2aa5d6375631e259ae7"
             },
             {
                 "name": "koer.ee",
@@ -590,10 +624,14 @@ curl --location --request GET 'https://testrar.internet.ee/repp/v1/domains' \
                 "created_at": "2021-01-29T11:16:23.679+02:00",
                 "updated_at": "2021-01-29T11:16:23.679+02:00",
                 "expire_time": "2022-01-30T00:00:00.000+02:00",
+                "auto_renew": {
+                    "enabled": false,
+                    "cycle": null
+                },
+                "rgp_statuses": [],
                 "outzone_at": null,
                 "delete_date": null,
                 "force_delete_date": null,
-                "transfer_code": "669031afb3bf93a8df55d29e33debc8c",
                 "contacts": [
                     {
                         "code": "ATSAA:KARL",
@@ -609,31 +647,37 @@ curl --location --request GET 'https://testrar.internet.ee/repp/v1/domains' \
                 "statuses": [
                     "inactive"
                 ],
-            "registrar": {
-                "name": "Kreative Digital OÜ",
-                "website": "https://kreative.ee"
-            },
-            "transfer_code": "asdf564cs89er3dg46d5f3v1df6534g3f2",
-            },
+                "registrar": {
+                    "name": "Kreative Digital OÜ",
+                    "website": "https://kreative.ee"
+                },
+                "transfer_code": "asdf564cs89er3dg46d5f3v1df6534g3f2"
+            }
         ],
-        "total_number_of_records": 69
+        "count": 69
     }
 }
 ```
 
-Gets all existing domains under current registrar account.
+Gets all existing domains under current registrar account. With `details=true`, both the full response and the reduced `simple=true` response include `auto_renew` and `rgp_statuses`, using the fields described in [Automatic renewal](#automatic-renewal). Without details, the list contains domain names only.
 
 ### HTTP Request
 
-`GET /repp/v1/registrar/domains`
+`GET /repp/v1/domains`
 
 ### URL Parameters
 
 Parameter | Required | Default | Description
 --------- | -------- | ------- | -----------
-limit | No | 200 | How many objects to return
+limit | No | | How many objects to return
 offset | No | 0 | Object query offset
-details | No | | false | Show full object each domain
+details | No | false | Show serialized domain objects
+simple | No | false | With details=true, show reduced domain objects
+q[auto_renew_eq] | No | | true selects enabled preferences; false selects disabled preferences
+q[auto_renew_grace] | No | | true selects domains in active paid grace; false adds no restriction
+q[auto_renew_funding_retry] | No | | true selects domains with an open funding retry cycle; false adds no restriction
+
+Filters can be combined with `limit` and `offset`. For example, `GET /repp/v1/domains?details=true&simple=true&q[auto_renew_grace]=true` lists domains whose paid cancellation window is still open. Funding retry does not set an RGP grace status.
 
 ## Get a specific domain
 
@@ -656,6 +700,11 @@ curl --location --request GET 'https://testrar.internet.ee/repp/v1/domains/biz.e
             "created_at": "2021-01-15T12:07:20.079+02:00",
             "updated_at": "2021-01-21T16:41:59.707+02:00",
             "expire_time": "2023-01-16T00:00:00.000+02:00",
+            "auto_renew": {
+                "enabled": false,
+                "cycle": null
+            },
+            "rgp_statuses": [],
             "outzone_at": null,
             "delete_date": null,
             "force_delete_date": null,
@@ -678,14 +727,14 @@ curl --location --request GET 'https://testrar.internet.ee/repp/v1/domains/biz.e
                 "name": "Kreative Digital OÜ",
                 "website": "https://kreative.ee"
             },
-            "transfer_code": "2f81ec671b69a2aa5d6375631e259ae7",
+            "transfer_code": "2f81ec671b69a2aa5d6375631e259ae7"
         }
     }
 }
 ```
 
 Returns a specific domain object, even if it doesn't belong to your registrar account.
-If you aren't sponsoring registrar for the domain, transfer_code is omitted from the response.
+If you aren't the sponsoring registrar for the domain, `transfer_code` and `auto_renew` are omitted from the response. `rgp_statuses` is returned to everyone allowed to view the domain; it contains `autoRenewPeriod` only during active paid grace and is otherwise empty. See [Automatic renewal](#automatic-renewal) for the preference and cycle fields.
 
 ### HTTP Request
 
@@ -709,6 +758,7 @@ curl --location --request POST 'https://testrar.internet.ee/repp/v1/domains' \
         "registrant": "ATSAA:KARL",
         "period": 1,
         "period_unit": "y",
+        "auto_renew": true,
         "admin_contacts": [
             "ATSAA:KARL"
         ],
@@ -738,7 +788,7 @@ curl --location --request POST 'https://testrar.internet.ee/repp/v1/domains' \
 }
 ```
 
-Register a new domain
+Register a new domain. `domain[auto_renew]` is optional and defaults to false when omitted. It accepts JSON booleans `true` / `false` and strings `"true"` / `"false"`; other values return code `2005`. Enabling when automatic renewal is unavailable returns `2306`. A reversal cycle ID is not allowed on create (`2306`).
 
 ### HTTP Request
 
@@ -751,6 +801,7 @@ Parameter | Required | Type | Description
 name | Yes | String | Domain name
 reserved_pw | No | String | Reserved password for domain
 transfer_code | No | String | Desired transfer code for domain
+auto_renew | No | Boolean | Enable automatic renewal at expiry; omitted means false
 registrant | Yes | String | Registrant contact code
 period_unit | Yes | String | Period unit. Can be year (y) or month (m)
 period | Yes | Integer | For how many period units to register domain
@@ -800,7 +851,20 @@ curl --location --request PUT 'https://testrar.internet.ee/repp/v1/domains/kassk
 }
 ```
 
-Changes domain registrant or auth code
+Changes domain registrant, auth code or automatic-renewal preference. `domain[auto_renew]` omitted means unchanged; explicit false disables future automatic renewals without refunding a paid cycle. Only the sponsoring registrar may change automatic renewal (`2201`). Accepted booleans are `true`, `false`, `"true"`, and `"false"` (`2005` otherwise).
+
+To reverse a paid cycle, supply its UUID in `domain[auto_renew_cycle_id]`, either alone or with `domain[auto_renew]: false`:
+
+```json
+{
+    "domain": {
+        "auto_renew": false,
+        "auto_renew_cycle_id": "3f7c2a5e-0000-0000-0000-000000000000"
+    }
+}
+```
+
+Reversal disables the preference and refunds once. Repeating the same reversed cycle succeeds without another refund. An unknown or wrong-domain cycle returns `2303`; a non-reversible cycle or a new reversal at or after its deadline returns `2304`. Combining true with a cycle ID returns `2306`. Failure rolls back the entire domain update. See [Automatic renewal](#automatic-renewal) for expiry adjustment and cancellation rules. The dedicated endpoint below returns the detailed reversal result.
 
 ### HTTP Request
 
@@ -816,14 +880,167 @@ domain_name | Yes | String | Domain
 
 Parameter | Required | Type | Description
 --------- | ------- | ----- | -----------
-registrant | Yes | Object | New registrant object
+registrant | No | Object | New registrant object
 registrant[code] | Yes | String | Contact ID of new registrant
 registrant[verified] | No | Boolean | Possible values are true / false. Defaults to false. Include it only if set to true.
 transfer_code | No | String | New EPP transfer code for domain
+auto_renew | No | Boolean | Future renewal preference; omitted means unchanged, false alone does not refund
+auto_renew_cycle_id | No | String | Explicit cycle UUID to reverse; may be supplied alone or with auto_renew=false
 
 <aside class="notice">
 Note — Wrap your payload attributes into "domain" object, as shown in example.
 </aside>
+
+## Automatic renewal
+
+Automatic renewal is off by default and is managed by the sponsoring registrar. When enabled, the registry attempts renewal at expiry for one calendar year, charging the registrar's cash account at the tariff valid at the original expiry. Each original expiry has one cycle, identified by a UUID. When automatic renewal is unavailable, new opt-ins fail with `2306`; eligible reversals of existing cycles remain available.
+
+After payment, `rgp_statuses` contains `autoRenewPeriod` (RFC 3915), separately from ordinary domain `statuses`. Cancellation is available strictly before the original expiry plus 15 calendar days in Europe/Tallinn. Use the returned `cancellation_deadline` timestamp, including its time zone. Grace does not itself prevent edits or transfers; other domain restrictions still apply.
+
+Insufficient funds or a renewal-blocking status (including `pendingDelete`) leaves the cycle in `fundingRetry`. The registry retries every 15 minutes until the same deadline. A late successful renewal still extends from the original expiry by one year and leaves only the remaining cancellation window. If the deadline arrives without renewal, the cycle becomes `fundingFailed`, the preference is disabled, and ordinary expiry processing continues. A later top-up or re-enable does not reopen that cycle.
+
+Disabling without a cycle ID is a future opt-out: it cancels a funding retry but leaves a paid renewal and its cancellation window intact. To cancel a paid renewal and obtain a refund, explicitly submit its cycle ID before the deadline. Reversal disables the preference, credits the exact original charge once, and removes the automatic year. If no other time was purchased, expiry returns to the original date; otherwise independently purchased time is preserved by subtracting only the automatic year. If the resulting expiry is in the past, ordinary expiry statuses and dates apply; reversal does not delete the domain. Repeating the same reversed cycle is successful without another refund, even after the deadline. A new reversal at or after the deadline fails with `2304` and changes nothing.
+
+When paid grace ends normally, the cycle becomes `completed`, the paid year remains, and the preference stays enabled. A completed transfer disables the preference. A funding retry is cancelled on transfer; a paid cycle becomes completed, keeping its paid year without refund. The gaining registrar is never charged for that cycle and must explicitly opt in for future automatic renewals.
+
+The registry sends automatic-renewal poll messages for these events only:
+
+Event | When sent
+----- | ---------
+renewed | A scheduled renewal succeeds, including success after funding retries
+fundingWarning | First insufficient-funds warning in the cycle, once
+renewProhibited | First renewal-blocking warning in the cycle, once; also used for a missing renewal tariff
+fundingFailed | Deadline reached without renewal; preference disabled
+
+Normal grace completion sends no poll message. Registrar-requested enable, disable and reversal commands return their outcome in the command response and send no automatic-renewal poll message. Transfer completion produces no extra automatic-renewal poll message; existing transfer notifications still apply.
+
+### Response fields
+
+Domain info and portfolio objects (both full and reduced forms) include the following fields. `auto_renew` is sponsor-only; `rgp_statuses` is visible to anyone allowed to view domain info.
+
+Field | Type | Description
+----- | ---- | -----------
+auto_renew.enabled | Boolean | Preference for future automatic renewal; independent of cycle state
+auto_renew.cycle | Object or null | Latest cycle, or null if no cycle exists
+auto_renew.cycle.id | String | Public cycle UUID used for reversal and idempotency
+auto_renew.cycle.state | String | fundingRetry, autoRenewPeriod, completed, reversed, fundingFailed, or cancelled
+auto_renew.cycle.original_expire_time | String | Original expiry timestamp in ISO 8601 format
+auto_renew.cycle.expire_time | String or null | Expiry applied by the automatic renewal; null before payment succeeds
+auto_renew.cycle.cancellation_deadline | String | Fixed cancellation/retry deadline in ISO 8601 format
+auto_renew.cycle.attempts | Integer | Number of renewal attempts
+rgp_statuses | Array | ["autoRenewPeriod"] while paid grace is active; [] otherwise, including during funding retries
+
+`cycle.expire_time` records the automatic renewal's expiry, including after reversal. Read domain info or `reversal.expire_time` for the domain's current expiry.
+
+## Get automatic-renewal details
+
+```shell
+curl --location --request GET 'https://testrar.internet.ee/repp/v1/domains/example.ee/auto_renew' \
+--header 'Authorization: Basic dGVzdDp0ZXN0MTIz'
+```
+
+> The above command returns JSON structured like this during paid grace:
+
+```json
+{
+    "code": 1000,
+    "message": "Command completed successfully",
+    "data": {
+        "domain": "example.ee",
+        "auto_renew": {
+            "enabled": true,
+            "cycle": {
+                "id": "3f7c2a5e-0000-0000-0000-000000000000",
+                "state": "autoRenewPeriod",
+                "original_expire_time": "2027-03-01T00:00:00+02:00",
+                "expire_time": "2028-03-01T00:00:00+02:00",
+                "cancellation_deadline": "2027-03-16T00:00:00+02:00",
+                "attempts": 1
+            }
+        },
+        "rgp_statuses": ["autoRenewPeriod"]
+    }
+}
+```
+
+Returns the sponsoring registrar's preference, latest cycle and RGP statuses. This endpoint is sponsor-scoped.
+
+### HTTP Request
+
+`GET /repp/v1/domains/:domain_id/auto_renew`
+
+### URL Parameters
+
+Parameter | Required | Description
+--------- | -------- | -----------
+domain_id | Yes | Domain identifier (domain name in the example)
+
+## Change automatic renewal / reverse a cycle
+
+```shell
+curl --location --request PUT 'https://testrar.internet.ee/repp/v1/domains/example.ee/auto_renew' \
+--header 'Authorization: Basic dGVzdDp0ZXN0MTIz' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "auto_renew": {
+        "enabled": false,
+        "cycle_id": "3f7c2a5e-0000-0000-0000-000000000000"
+    }
+}'
+```
+
+> The above reversal command returns JSON structured like this:
+
+```json
+{
+    "code": 1000,
+    "message": "Command completed successfully",
+    "data": {
+        "domain": "example.ee",
+        "auto_renew": {
+            "enabled": false,
+            "cycle": {
+                "id": "3f7c2a5e-0000-0000-0000-000000000000",
+                "state": "reversed",
+                "original_expire_time": "2027-03-01T00:00:00+02:00",
+                "expire_time": "2028-03-01T00:00:00+02:00",
+                "cancellation_deadline": "2027-03-16T00:00:00+02:00",
+                "attempts": 1
+            }
+        },
+        "reversal": {
+            "cycle_id": "3f7c2a5e-0000-0000-0000-000000000000",
+            "expire_time": "2027-03-01T00:00:00+02:00",
+            "refund": {
+                "amount": "12.00",
+                "currency": "EUR"
+            },
+            "repeated": false
+        }
+    }
+}
+```
+
+Only the sponsoring registrar may change the preference or reverse a cycle (`2201`). Wrap parameters in `auto_renew`. At least one of `enabled` and `cycle_id` must be supplied. To enable future renewals, send `{"auto_renew":{"enabled":true}}`. To opt out without a refund, send `{"auto_renew":{"enabled":false}}`. Omitting `enabled` leaves the preference unchanged unless a reversal is requested; reversal sets it to false.
+
+A preference-only response has the same `domain` and `auto_renew` fields, with `reversal: null`. A repeated reversal returns `repeated: true` and the stored refund without issuing another credit. Unknown or wrong-domain cycles fail with `2303`. A cycle outside paid grace, or a new reversal at or after the deadline, fails with `2304`. Enabling when unavailable, or combining `enabled: true` with `cycle_id`, fails with `2306`. Failure leaves all state unchanged. These are response-body EPP result codes; see [Errors](#errors).
+
+### HTTP Request
+
+`PUT /repp/v1/domains/:domain_id/auto_renew`
+
+### URL Parameters
+
+Parameter | Required | Description
+--------- | -------- | -----------
+domain_id | Yes | Domain identifier (domain name in the example)
+
+### Payload Parameters
+
+Parameter | Required | Type | Description
+--------- | -------- | ---- | -----------
+auto_renew[enabled] | No | Boolean | true, false, "true", or "false"; any other value returns 2005
+auto_renew[cycle_id] | No | String | Explicit cycle UUID to reverse; supply alone or with enabled=false
 
 ## Renew a specific domain
 
