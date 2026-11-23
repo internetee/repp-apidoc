@@ -536,6 +536,51 @@ Parameter | Required | Description
 --------- | ------- | -----------
 contact_id | Yes | Contact ID to check
 
+## Copy an existing contact
+
+```shell
+curl --location --request POST 'https://testrar.internet.ee/repp/v1/contacts/copy/ATSAA:84F23FD1' \
+--header 'Authorization: Basic dGVzdDp0ZXN0MTIz' \
+--data-raw ''
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "code": 1000,
+    "message": "Command completed successfully",
+    "data": {
+        "contact": {
+            "code": "ATSAA:5C1E9A07"
+        }
+    }
+}
+```
+
+Creates a new contact under your registrar account from the data of one of your existing contacts. Use the returned contact ID to update the copy or to use it in domain operations.
+
+Copying semantics:
+
+* Every request creates a new contact, even if an identical contact already exists. (Registrar transfers keep reusing an identical contact.)
+* The copy gets a new contact ID and a new auth info, and keeps a reference to the source contact.
+* Copied: name, email, phone, fax, ident (code, type, country), org name, address (when address processing is enabled), disclosure settings.
+* Not copied: statuses and status notes (the copy starts as `ok`), identity verification (verification request, result and proof of identity), domain associations.
+* The copy is validated like a newly created contact. If the source contact no longer passes validation (e.g. outdated data or ident), the copy is not created and an error is returned — update the source contact first.
+* The source contact and its domains are not changed. Later updates of one contact do not affect the other.
+
+Errors: `2303` (HTTP 404) if the contact does not exist or belongs to another registrar, `2201` (HTTP 401) if the API user is not allowed to create contacts, or a validation error (HTTP 400).
+
+### HTTP Request
+
+`POST /repp/v1/contacts/copy/:contact_id`
+
+### URL Parameters
+
+Parameter | Required | Description
+--------- | ------- | -----------
+contact_id | Yes | ID of the contact to copy
+
 # Domains
 
 ## Get all existing domains
